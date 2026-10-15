@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Экология Гомельской области</title>
+    <meta name="description" content="Экологическое состояние Гомельской области: воздух, вода, загрязнения, карта и рекомендации." />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#10b981" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="brand">
+                <div class="logo" aria-hidden="true">🌿</div>
+                <div>
+                    <h1>Экология Гомельской области</h1>
+                    <p class="tagline">Полесье · Сож · Припять · Днепр · 21 район</p>
+                </div>
+            </div>
+            <button class="nav-toggle" aria-label="Открыть меню" aria-expanded="false">
+                <span class="nav-toggle-bar"></span>
+            </button>
+            <nav class="nav">
+                <a href="#overview" class="nav-link">Обзор</a>
+                <a href="#air" class="nav-link">Воздух</a>
+                <a href="#water" class="nav-link">Вода</a>
+                <a href="#map" class="nav-link">Карта</a>
+                <a href="knowledge.html" class="nav-link">База знаний</a>
+                <button id="btnOpenCalculator" class="nav-link calculator-link" style="background: none; border: none; cursor: pointer; font-family: inherit;">
+                    <span class="nav-icon">🧮</span>
+                    <span>Калькулятор</span>
+                </button>
+                <a href="comparison.html" class="nav-link">Сравнение</a>
+                <a href="news.html" class="nav-link">Новости</a>
+                <a href="admin.html" class="cta">Админ</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="overview" class="section hero reveal">
+            <div class="container grid-2">
+                <div>
+                    <h2><span class="icon icon-leaf" aria-hidden="true">🌿</span> Экологический профиль Гомельщины</h2>
+                    <p>
+                        Гомельская область — крупнейшая в Беларуси (40,4 тыс. км²): Белорусское Полесье, бассейны
+                        Сожа, Припяти и Днепра, 21 район. Здесь сочетаются леса и болота, промышленность Жлобина,
+                        Мозыря и Светлогорска и наследие чернобыльской аварии в южных районах.
+                    </p>
+                    <p style="margin: 12px 0 16px; padding: 10px 14px; background: rgba(16,185,129,0.1); border-left: 3px solid var(--accent); border-radius: 8px; font-size: 14px; color: var(--muted);">
+                        📅 Данные актуальны на <strong id="dataAsOf" style="color: var(--accent);">август 2026</strong>
+                    </p>
+                    <div class="region-facts">
+                        <div class="region-fact"><strong>21</strong><span>район области</span></div>
+                        <div class="region-fact"><strong>46%</strong><span>лесистость территории</span></div>
+                        <div class="region-fact"><strong>3</strong><span>главные реки: Сож, Припять, Днепр</span></div>
+                        <div class="region-fact"><strong>Юг</strong><span>Полесский заповедник и зона отчуждения</span></div>
+                    </div>
+                    <ul class="highlights">
+                        <li><strong>Карта 21 района</strong> — от Лельчиц и Турова до Добруша и Рогачёва</li>
+                        <li><strong>Промышленность</strong> — БМЗ, Мозырский НПЗ, «Химволокно», Гомсельмаш</li>
+                        <li><strong>ООПТ</strong> — нацпарк «Припятский» и Полесский радиационно-экологический заповедник</li>
+                        <li><strong>Новости и знания</strong> — что происходит на Гомельщине сейчас</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="card kpi">
+                        <h3>Ключевые показатели</h3>
+                        <div class="kpi-grid">
+                            <div class="kpi-item">
+                                <div class="kpi-value" id="kpi-air">—</div>
+                                <div class="kpi-label">Индекс качества воздуха (AQI)</div>
+                            </div>
+                            <div class="kpi-item">
+                                <div class="kpi-value" id="kpi-water">—</div>
+                                <div class="kpi-label">Индекс качества воды</div>
+                            </div>
+                            <div class="kpi-item">
+                                <div class="kpi-value" id="kpi-clean">—</div>
+                                <div class="kpi-label">Чистых локаций</div>
+                            </div>
+                            <div class="kpi-item">
+                                <div class="kpi-value" id="kpi-dirty">—</div>
+                                <div class="kpi-label">Проблемных локаций</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="air" class="section reveal">
+            <div class="container">
+                <h2><span class="icon icon-wind" aria-hidden="true">💨</span> Качество атмосферного воздуха</h2>
+                <p>
+                    Динамика по станциям Гомеля, Жлобина, Мозыря и Светлогорска: PM2.5, PM10, NO₂, SO₂ за январь — август 2026 года.
+                    Источники: Белгидромет, посты мониторинга Гомельской области.
+                </p>
+                <div class="card">
+                    <canvas id="airChart" height="110"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="water" class="section reveal">
+            <div class="container">
+                <h2><span class="icon icon-water" aria-hidden="true">💧</span> Состояние поверхностных вод</h2>
+                <p>
+                    Сравнение Сожа (водоснабжение Гомеля), Припяти (Полесье, Мозырь, Туров) и Днепра (Речица, Рогачёв, Лоев).
+                    Показатели: мутность, нитраты, БПК5, pH и жёсткость по постам наблюдения области.
+                </p>
+                <div class="card">
+                    <canvas id="waterChart" height="110"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="pollution" class="section reveal">
+            <div class="container">
+                <h2><span class="icon icon-alert" aria-hidden="true">⚠️</span> Потенциально загрязнённые территории</h2>
+                <div class="card">
+                    <ul id="pollutionList" class="pollution-list"></ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="emitters" class="section reveal">
+            <div class="container">
+                <h2><span class="icon icon-alert" aria-hidden="true">🏭</span> Предприятия и вклад в загрязнение</h2>
+                <p>Данные на август 2026: доля вклада предприятия в общий объём выбросов, %.</p>
+                <div class="grid-2">
+                    <div class="card">
+                        <canvas id="emittersChart" height="120"></canvas>
+                    </div>
+                    <div class="card">
+                        <ul id="emittersList" class="emitters-list"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="map" class="section reveal">
+            <div class="container">
+                <h2><span class="icon icon-map" aria-hidden="true">📍</span> Карта Гомельской области</h2>
+                <p>Обзор от Полесского заповедника до Добруша. Фильтр по району показывает точки только выбранной территории.</p>
+                <div id="mapContainer" class="map"></div>
+
+                <div class="filters card">
+                    <div class="filters-row">
+                        <label class="district-filter">
+                            Район
+                            <select id="districtFilter" class="form-input">
+                                <option value="all">Все районы области</option>
+                            </select>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="toggleClean" checked />
+                            Показывать чистые локации
+                        </label>
+                        <label>
+                            <input type="checkbox" id="toggleDirty" checked />
+                            Показывать проблемные локации
+                        </label>
+                        <label>
+                            <input type="checkbox" id="toggleClusters" checked />
+                            Кластеры
+                        </label>
+                        <label>
+                            <input type="checkbox" id="toggleHeat" />
+                            Тепловая карта
+                        </label>
+                        <button id="btnAddPoint" class="btn">Добавить точку кликом</button>
+                    </div>
+                </div>
+
+                <!-- Модальное окно для добавления метки -->
+                <div id="markerModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Добавить метку на карте</h3>
+                            <button class="modal-close" id="modalClose">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Тип точки</label>
+                                <select id="markerType" class="form-input">
+                                    <option value="clean">Чистая локация</option>
+                                    <option value="dirty">Проблемная локация</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Название <span style="color: var(--danger);">*</span></label>
+                                <input type="text" id="markerName" class="form-input" placeholder="Например: берег Сожа у Новобелицы" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Район Гомельской области</label>
+                                <select id="markerDistrict" class="form-input"></select>
+                            </div>
+                            <div class="form-group" id="markerNoteGroup">
+                                <label>Примечание</label>
+                                <input type="text" id="markerNote" class="form-input" placeholder="Опционально" />
+                            </div>
+                            <div class="form-group" id="markerSeverityGroup" style="display:none;">
+                                <label>Степень загрязнения</label>
+                                <select id="markerSeverity" class="form-input">
+                                    <option value="низкая">Низкая</option>
+                                    <option value="средняя" selected>Средняя</option>
+                                    <option value="высокая">Высокая</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="markerPollutantGroup" style="display:none;">
+                                <label>Загрязнитель</label>
+                                <input type="text" id="markerPollutant" class="form-input" placeholder="Например: PM10, NO₂" />
+                            </div>
+                            <div class="modal-footer">
+                                <button id="markerCancel" class="btn btn-secondary">Отмена</button>
+                                <button id="markerSubmit" class="btn">Добавить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Кнопка для открытия боковой панели документации -->
+        <button id="docSidebarToggle" class="doc-sidebar-toggle" aria-label="Открыть документацию">
+            <span>📖</span>
+            <span class="doc-toggle-label">Документация</span>
+        </button>
+
+        <!-- Боковая панель документации -->
+        <div id="docSidebar" class="doc-sidebar">
+            <div class="doc-sidebar-header">
+                <h2>📖 Документация проекта</h2>
+                <button id="docSidebarClose" class="doc-sidebar-close" aria-label="Закрыть">×</button>
+            </div>
+            <div class="doc-sidebar-content">
+                <div class="news-tabs">
+                    <button class="news-tab-btn active" data-tab="doc-sources">📋 Источники данных</button>
+                    <button class="news-tab-btn" data-tab="doc-analogs">🔍 Аналоги</button>
+                    <button class="news-tab-btn" data-tab="doc-feedback">✅ Апробация</button>
+                    <button class="news-tab-btn" data-tab="doc-bibliography">📚 Библиография</button>
+                </div>
+
+                <!-- Вкладка: Источники данных -->
+                <div class="news-tab-panel active" id="tab-doc-sources">
+                    <div class="card">
+                        <h3 style="margin-top: 0; margin-bottom: 16px;">📋 Источники данных и корректность показателей</h3>
+                        <p>
+                            Все данные, используемые на платформе, получены из официальных источников и верифицированы. 
+                            Ниже представлена таблица источников данных с указанием показателей, периодичности обновления и ограничений.
+                        </p>
+                        <p style="margin-top: 16px; padding: 12px; background: rgba(251,191,36,0.1); border-left: 3px solid rgba(251,191,36,0.5); border-radius: 8px; color: var(--muted); font-size: 14px;">
+                            <strong>⚠️ Важно:</strong> Данные могут иметь погрешность из-за особенностей сбора, обработки и интерполяции показателей. 
+                            Значения могут отличаться от фактических измерений на местах. При принятии решений рекомендуется учитывать возможные отклонения.
+                        </p>
+                        <div class="sources-table-wrapper" style="margin-top: 20px;">
+                            <table class="sources-table">
+                                <thead>
+                                    <tr>
+                                        <th>Источник</th>
+                                        <th>Показатель</th>
+                                        <th>Периодичность</th>
+                                        <th>Ограничения</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong><a href="https://www.pogoda.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Белгидромет</a></strong></td>
+                                        <td>AQI, PM2.5, PM10, NO₂, SO₂</td>
+                                        <td>Ежедневно</td>
+                                        <td>Неполное покрытие малых населённых пунктов, задержка публикации 1–2 месяца</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong><a href="https://minpriroda.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Минприроды Республики Беларусь</a></strong></td>
+                                        <td>Мутность, нитраты, БПК<sub>5</sub>, pH</td>
+                                        <td>Ежеквартально</td>
+                                        <td>Измерения только на постах наблюдения, значения интерполируются</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong><a href="https://www.belstat.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Белстат</a></strong></td>
+                                        <td>Выбросы, отходы, лесной фонд</td>
+                                        <td>Ежегодно</td>
+                                        <td>Агрегированные по региону значения без детализации по предприятиям</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong><a href="https://gomel-region.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Открытые данные Гомельской области</a></strong></td>
+                                        <td>Свалки, эко‑акции, правонарушения</td>
+                                        <td>По мере публикации</td>
+                                        <td>Требуется ручная верификация и очистка дубликатов</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка: Анализ аналогов -->
+                <div class="news-tab-panel" id="tab-doc-analogs">
+                    <div class="card">
+                    <p>
+                        Сравнение платформы «Экологический профиль региона» с республиканскими и областными экопорталами:
+                    </p>
+                    <div class="analogs-table-wrapper">
+                        <table class="analogs-table">
+                            <thead>
+                                <tr>
+                                    <th>Платформа</th>
+                                    <th>Карта свалок</th>
+                                    <th>Сравнение регионов</th>
+                                    <th>Обратная связь</th>
+                                    <th>Фокус на Гомельской области</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="https://minpriroda.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Минприроды Республики Беларусь</a></td>
+                                    <td>Есть, без детальной карты Гомельской области</td>
+                                    <td>Ограничено</td>
+                                    <td>Обращения граждан</td>
+                                    <td>Нет</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://www.pogoda.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Белгидромет</a></td>
+                                    <td>Общая карта наблюдений</td>
+                                    <td>Сводные показатели</td>
+                                    <td>Нет локальной обратной связи</td>
+                                    <td>Нет</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://gomel-region.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Сайт Гомельского облисполкома</a></td>
+                                    <td>Без интерактивной карты</td>
+                                    <td>Нет сравнения</td>
+                                    <td>Обращения через приёмные</td>
+                                    <td>Да, но данные разрознены</td>
+                                </tr>
+                                <tr style="background: rgba(16,185,129,0.1); font-weight: 600;">
+                                    <td><strong>Экологический профиль Гомельской области (данный проект)</strong></td>
+                                    <td><strong>Подробная интерактивная карта</strong></td>
+                                    <td><strong>Наглядные графики и рейтинг</strong></td>
+                                    <td><strong>Возможность добавлять точки</strong></td>
+                                    <td><strong>Полный фокус на регионе</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h3 style="margin-top: 24px; margin-bottom: 12px;">Ключевые преимущества проекта:</h3>
+                    <ul class="highlights">
+                        <li>Подробная интерактивная карта Гомельской области с возможностью добавления пользовательских точек</li>
+                        <li>Сравнение с другими областями Беларуси с наглядными графиками</li>
+                        <li>Интеграция новостей и экологических событий</li>
+                        <li>Фокус на практической пользе для местных жителей</li>
+                    </ul>
+                </div>
+                </div>
+
+                <!-- Вкладка: Апробация проекта -->
+                <div class="news-tab-panel" id="tab-doc-feedback">
+                    <div class="card">
+                        <h3 style="margin-top: 0; margin-bottom: 20px;">✅ Апробация проекта и обратная связь</h3>
+                        
+                        <div style="margin-bottom: 24px; padding: 16px; background: rgba(16,185,129,0.1); border-left: 3px solid rgba(16,185,129,0.5); border-radius: 8px;">
+                            <h4 style="margin-top: 0; margin-bottom: 12px; color: var(--accent);">🎯 Почему стоит пользоваться сайтом?</h4>
+                            <ul class="highlights" style="margin: 0;">
+                                <li><strong>Актуальная информация</strong> — данные регулярно обновляются из официальных источников</li>
+                                <li><strong>Интерактивность</strong> — возможность добавлять свои наблюдения на карту</li>
+                                <li><strong>Наглядность</strong> — визуализация данных через графики и карты</li>
+                                <li><strong>Практическая польза</strong> — помощь в принятии решений для жителей, школ, бизнеса и властей</li>
+                                <li><strong>Сравнительный анализ</strong> — возможность сравнить экологическую ситуацию с соседними регионами</li>
+                                <li><strong>Экологическое просвещение</strong> — база знаний и калькулятор углеродного следа</li>
+                            </ul>
+                        </div>
+
+                        <h4 style="margin-top: 24px; margin-bottom: 16px;">📋 План апробации проекта</h4>
+                        <div style="margin-bottom: 24px;">
+                            <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--border);">
+                                <h5 style="margin-top: 0; margin-bottom: 8px; color: var(--accent);">Этап 1: Пилотное тестирование (1-2 месяца)</h5>
+                                <ul style="margin: 0; padding-left: 20px; color: var(--muted);">
+                                    <li>Привлечение 50-100 активных пользователей из разных категорий (жители, школы, муниципалитеты)</li>
+                                    <li>Сбор первичной обратной связи через форму на сайте</li>
+                                    <li>Анализ использования основных функций платформы</li>
+                                    <li>Выявление технических проблем и недочётов интерфейса</li>
+                                </ul>
+                            </div>
+
+                            <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--border);">
+                                <h5 style="margin-top: 0; margin-bottom: 8px; color: var(--accent);">Этап 2: Расширенное тестирование (2-3 месяца)</h5>
+                                <ul style="margin: 0; padding-left: 20px; color: var(--muted);">
+                                    <li>Увеличение аудитории до 300-500 пользователей</li>
+                                    <li>Проведение регулярных опросов граждан (ежемесячно)</li>
+                                    <li>Организация фокус-групп с представителями разных категорий пользователей</li>
+                                    <li>Внедрение улучшений на основе собранной обратной связи</li>
+                                    <li>Партнёрство с образовательными учреждениями для использования платформы в учебном процессе</li>
+                                </ul>
+                            </div>
+
+                            <div style="margin-bottom: 16px; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--border);">
+                                <h5 style="margin-top: 0; margin-bottom: 8px; color: var(--accent);">Этап 3: Оценка эффективности (1 месяц)</h5>
+                                <ul style="margin: 0; padding-left: 20px; color: var(--muted);">
+                                    <li>Анализ статистики использования платформы</li>
+                                    <li>Оценка влияния платформы на экологическое поведение пользователей</li>
+                                    <li>Сбор финальной обратной связи через опросы</li>
+                                    <li>Подготовка отчёта об апробации с рекомендациями по дальнейшему развитию</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 24px; padding: 16px; background: rgba(6,182,212,0.1); border-left: 3px solid rgba(6,182,212,0.5); border-radius: 8px;">
+                            <h4 style="margin-top: 0; margin-bottom: 12px; color: var(--primary);">📊 Регулярные опросы граждан</h4>
+                            <p style="margin: 0 0 12px; color: var(--muted);">
+                                Для обеспечения актуальности и полезности платформы <strong>опросы граждан проводятся регулярно</strong> — ежемесячно в рамках расширенного тестирования и ежеквартально после запуска проекта.
+                            </p>
+                            <p style="margin: 0; color: var(--muted);">
+                                Опросы включают оценку удобства использования, полезности функций, качества данных и предложений по улучшению. 
+                                Результаты опросов учитываются при обновлении платформы и добавлении новых функций.
+                            </p>
+                        </div>
+
+                        <div style="margin-top: 24px;">
+                            <h4 style="margin-bottom: 12px;">💬 Форма обратной связи</h4>
+                            <p style="color: var(--muted); margin-bottom: 16px;">
+                                Вы можете оставить свой отзыв о платформе, предложить улучшения или сообщить об ошибках через форму на странице «База знаний».
+                            </p>
+                            <a href="knowledge.html#suggestions" style="display: inline-block; padding: 10px 20px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #022c22; text-decoration: none; border-radius: 10px; font-weight: 600; transition: all 0.3s ease;">
+                                Перейти к форме предложений →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка: Библиография -->
+                <div class="news-tab-panel" id="tab-doc-bibliography">
+                    <div class="card">
+                        <h3 style="margin-top: 0; margin-bottom: 16px;">📚 Библиографический список</h3>
+                        <p style="margin-bottom: 16px; color: var(--muted);">
+                            Список использованных источников информации для разработки платформы и сбора данных об экологической ситуации в Гомельской области.
+                        </p>
+                        <ol class="bibliography-list">
+                            <li>
+                                <a href="https://www.pogoda.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Белгидромет</a>. 
+                                Национальная система мониторинга окружающей среды Республики Беларусь. 
+                                <a href="https://www.pogoda.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; font-size: 12px;">[Электронный ресурс]</a>
+                            </li>
+                            <li>
+                                <a href="https://gomel-region.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Комитет природных ресурсов и охраны окружающей среды Гомельского облисполкома</a>. 
+                                Доклады о состоянии и об охране окружающей среды Гомельской области, 2024–2026 гг. 
+                                <a href="https://gomel-region.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; font-size: 12px;">[Электронный ресурс]</a>
+                            </li>
+                            <li>
+                                <a href="https://www.belstat.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Белстат</a>. 
+                                Статистика окружающей среды Республики Беларусь. 
+                                <a href="https://www.belstat.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; font-size: 12px;">[Электронный ресурс]</a>
+                            </li>
+                            <li>
+                                <a href="https://minpriroda.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Минприроды Республики Беларусь</a>. 
+                                Национальный доклад о состоянии окружающей среды. 
+                                <a href="https://minpriroda.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline; font-size: 12px;">[Электронный ресурс]</a>
+                            </li>
+                            <li>
+                                Закон Республики Беларусь «Об охране окружающей среды». 
+                                <a href="https://pravo.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Национальный правовой Интернет-портал</a>.
+                            </li>
+                            <li>
+                                Открытые данные и новостные порталы Гомельской области: 
+                                <a href="https://gomel-region.gov.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Гомельский облисполком</a>, 
+                                <a href="https://www.gp.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Гомельская правда</a>, 
+                                <a href="https://www.belta.by" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">БЕЛТА</a>.
+                            </li>
+                            <li>
+                                <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">OpenStreetMap</a>. 
+                                Открытая картографическая платформа для визуализации геоданных.
+                            </li>
+                            <li>
+                                <a href="https://leafletjs.com" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Leaflet.js</a>. 
+                                Библиотека для работы с интерактивными картами.
+                            </li>
+                            <li>
+                                <a href="https://www.chartjs.org" target="_blank" rel="noopener noreferrer" style="color: var(--accent); text-decoration: underline;">Chart.js</a>. 
+                                Библиотека для создания графиков и диаграмм.
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Затемнение фона при открытой панели -->
+        <div id="docSidebarOverlay" class="doc-sidebar-overlay"></div>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div>
+                © <span id="year"></span> Экология Гомельской области. Проект сделан Харьковой Софией.
+            </div>
+            <nav class="nav">
+                <a href="#overview">Вверх</a>
+                <a href="knowledge.html">База знаний</a>
+                <a href="comparison.html">Сравнение</a>
+                <a href="news.html">Новости</a>
+                <a href="admin.html">Админ</a>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- App -->
+    <script src="assets/js/data-store.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/features.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+        const dataAsOfEl = document.getElementById('dataAsOf');
+        if (dataAsOfEl && typeof EcoDataStore !== 'undefined') dataAsOfEl.textContent = EcoDataStore.DATA_AS_OF;
+        const biblYearEl = document.getElementById('biblYear');
+        const biblYearDupEl = document.getElementById('biblYearDup');
+        if (biblYearEl && biblYearDupEl) {
+            const year = new Date().getFullYear() - 1;
+            biblYearEl.textContent = year;
+            biblYearDupEl.textContent = year;
+        }
+
+        // Боковая панель документации
+        const docSidebarToggle = document.getElementById('docSidebarToggle');
+        const docSidebar = document.getElementById('docSidebar');
+        const docSidebarClose = document.getElementById('docSidebarClose');
+        const docSidebarOverlay = document.getElementById('docSidebarOverlay');
+        
+        function openDocSidebar() {
+            docSidebar.classList.add('open');
+            docSidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeDocSidebar() {
+            docSidebar.classList.remove('open');
+            docSidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        if (docSidebarToggle) {
+            docSidebarToggle.addEventListener('click', openDocSidebar);
+        }
+        
+        if (docSidebarClose) {
+            docSidebarClose.addEventListener('click', closeDocSidebar);
+        }
+        
+        if (docSidebarOverlay) {
+            docSidebarOverlay.addEventListener('click', closeDocSidebar);
+        }
+        
+        // Инициализация вкладок документации с плавными переходами
+        function initDocTabs() {
+            const buttons = document.querySelectorAll('#docSidebar .news-tab-btn');
+            const panels = document.querySelectorAll('#docSidebar .news-tab-panel');
+            
+            buttons.forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const target = btn.getAttribute('data-tab');
+                    const panel = document.getElementById('tab-' + target);
+                    
+                    if (!panel) return;
+                    
+                    // Плавное скрытие текущей панели
+                    panels.forEach((p) => {
+                        if (p.classList.contains('active')) {
+                            p.style.opacity = '0';
+                            p.style.transform = 'translateX(-10px)';
+                            setTimeout(() => {
+                                p.classList.remove('active');
+                            }, 200);
+                        }
+                    });
+                    
+                    // Обновление кнопок
+                    buttons.forEach((b) => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    // Плавное появление новой панели
+                    setTimeout(() => {
+                        panel.classList.add('active');
+                        setTimeout(() => {
+                            panel.style.opacity = '1';
+                            panel.style.transform = 'translateX(0)';
+                        }, 10);
+                    }, 200);
+                });
+            });
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDocTabs);
+        } else {
+            initDocTabs();
+        }
+
+    </script>
+
+    <!-- Модальное окно калькулятора -->
+    <div id="calculatorModal" class="modal">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(16,185,129,0.1)); border-bottom: 2px solid rgba(16,185,129,0.2);">
+                <div style="display: flex; align-items: center; gap: 20px; flex: 1;">
+                    <div style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, rgba(6,182,212,0.3), rgba(16,185,129,0.3)); border: 3px solid rgba(16,185,129,0.5); box-shadow: 0 4px 15px rgba(16,185,129,0.3);">
+                        <span style="font-size: 48px;">🧮</span>
+                    </div>
+                    <div style="flex: 1;">
+                        <h2 class="calculator-title-gradient" style="margin: 0 0 8px; font-size: 32px;">
+                            Экологический калькулятор
+                        </h2>
+                        <p style="margin: 0 0 4px; color: var(--muted); font-size: 15px; line-height: 1.5;">
+                            🌍 Рассчитайте ваш углеродный след и получите персональные рекомендации
+                        </p>
+                        <p style="margin: 0; color: var(--muted); font-size: 13px; opacity: 0.8;">
+                            Узнайте, как ваш образ жизни влияет на окружающую среду
+                        </p>
+                    </div>
+                </div>
+                <button class="modal-close" id="btnCloseCalculator" style="margin-left: 20px;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 32px;">
+                <div style="text-align: center; margin-bottom: 32px; padding: 20px; background: rgba(16,185,129,0.05); border-radius: 12px; border: 1px solid rgba(16,185,129,0.15);">
+                    <p style="margin: 0 0 16px; color: var(--text); font-size: 16px; font-weight: 500;">
+                        💡 Заполните данные о вашем образе жизни, чтобы узнать ваш экологический след
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px;">
+                        <span style="display: inline-block; padding: 6px 12px; background: rgba(6,182,212,0.15); border-radius: 8px; font-size: 13px; color: var(--primary); border: 1px solid rgba(6,182,212,0.3);">
+                            💡 Пример: 500 км/мес на авто
+                        </span>
+                        <span style="display: inline-block; padding: 6px 12px; background: rgba(16,185,129,0.15); border-radius: 8px; font-size: 13px; color: var(--accent); border: 1px solid rgba(16,185,129,0.3);">
+                            ⚡ Среднее: 200 кВт·ч/мес
+                        </span>
+                        <span style="display: inline-block; padding: 6px 12px; background: rgba(6,182,212,0.15); border-radius: 8px; font-size: 13px; color: var(--primary); border: 1px solid rgba(6,182,212,0.3);">
+                            🏠 Газ: 50-100 м³/мес
+                        </span>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-top: 24px;">
+                    <div>
+                        <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                            <span style="font-size: 24px;">🚗</span>
+                            <span>Транспорт</span>
+                        </h3>
+                        <div class="form-group">
+                            <label>Поездки на автомобиле (км/месяц)</label>
+                            <input type="number" id="calcCar" class="form-input" value="0" min="0" placeholder="Например: 500" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">💡 Средний показатель: 300-800 км/месяц</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Поездки на общественном транспорте (км/месяц)</label>
+                            <input type="number" id="calcPublic" class="form-input" value="0" min="0" placeholder="Например: 200" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">🚌 Автобус, трамвай, метро</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Перелёты (часов/год)</label>
+                            <input type="number" id="calcFlights" class="form-input" value="0" min="0" placeholder="Например: 10" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">✈️ Один перелёт ≈ 2-3 часа</small>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                            <span style="font-size: 24px;">⚡</span>
+                            <span>Энергия и отходы</span>
+                        </h3>
+                        <div class="form-group">
+                            <label>Потребление электроэнергии (кВт·ч/месяц)</label>
+                            <input type="number" id="calcEnergy" class="form-input" value="0" min="0" placeholder="Например: 200" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">⚡ Среднее для квартиры: 150-300 кВт·ч/мес</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Потребление газа (м³/месяц)</label>
+                            <input type="number" id="calcGas" class="form-input" value="0" min="0" placeholder="Например: 80" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">🏠 Среднее: 50-150 м³/месяц (отопление, готовка)</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Отходы (кг/месяц)</label>
+                            <input type="number" id="calcWaste" class="form-input" value="0" min="0" placeholder="Например: 30" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">♻️ Среднее: 20-40 кг/месяц на человека</small>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 40px;">
+                    <button id="btnCalculate" class="btn" style="padding: 16px 40px; font-size: 16px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--accent)); border: none; box-shadow: 0 6px 20px rgba(16,185,129,0.4); transition: all 0.3s ease;">
+                        <span style="margin-right: 10px; font-size: 20px;">🧮</span>
+                        Рассчитать углеродный след
+                    </button>
+                </div>
+                <div id="calcResult" style="margin-top: 40px; display: none; animation: fadeInUp 0.5s ease;">
+                    <div class="card" style="background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(6,182,212,0.18)); border: 2px solid rgba(16,185,129,0.5); padding: 32px; box-shadow: 0 8px 30px rgba(16,185,129,0.2);">
+                        <div style="text-align: center; margin-bottom: 24px;">
+                            <div style="font-size: 64px; margin-bottom: 16px;">🌍</div>
+                            <h3 style="margin: 0 0 12px; font-size: 24px;">Ваш углеродный след</h3>
+                            <div style="font-size: 42px; font-weight: 800; color: var(--accent); margin: 20px 0; text-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+                                <span id="calcTotal"></span> <span style="font-size: 20px; color: var(--muted); font-weight: 600;">тонн CO₂/год</span>
+                            </div>
+                        </div>
+                        <div id="calcRecommendations" style="margin-top: 24px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+

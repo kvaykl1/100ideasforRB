@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Сравнение регионов — Экология Гомельской области</title>
+    <meta name="description" content="Сравнительный анализ экологических показателей Гомельской области с другими областями Беларуси." />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="brand">
+                <div class="logo" aria-hidden="true">🌿</div>
+                <div>
+                    <h1>Экология Гомельской области</h1>
+                    <p class="tagline">Аналитика · Карта · Сравнение · Новости</p>
+                </div>
+            </div>
+            <button class="nav-toggle" aria-label="Открыть меню" aria-expanded="false">
+                <span class="nav-toggle-bar"></span>
+            </button>
+            <nav class="nav">
+                <a href="index.html#overview" class="nav-link">Обзор</a>
+                <a href="index.html#air" class="nav-link">Воздух</a>
+                <a href="index.html#water" class="nav-link">Вода</a>
+                <a href="index.html#map" class="nav-link">Карта</a>
+                <a href="knowledge.html" class="nav-link">База знаний</a>
+                <button id="btnOpenCalculator" class="nav-link calculator-link" style="background: none; border: none; cursor: pointer; font-family: inherit;">
+                    <span class="nav-icon">🧮</span>
+                    <span>Калькулятор</span>
+                </button>
+                <a href="comparison.html" class="cta" aria-current="page">Сравнение</a>
+                <a href="news.html" class="nav-link">Новости</a>
+                <a href="admin.html" class="nav-link">Админ</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="section hero reveal">
+            <div class="container">
+                <h2><span class="icon icon-alert" aria-hidden="true">📊</span> Сравнение с соседними регионами</h2>
+                <p class="lead" style="max-width: 800px; margin: 0 auto;">
+                    Гомельская область сравнивается с другими областями Беларуси, а ниже — города области между собой: Гомель, Жлобин, Мозырь, Светлогорск, Речица, Калинковичи, Рогачёв и Добруш.
+                </p>
+            </div>
+        </section>
+
+        <section class="section reveal">
+            <div class="container">
+                <h2>Ключевые показатели</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Индекс качества воздуха (AQI)</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Среднегодовой индекс качества атмосферного воздуха по регионам. Чем ниже значение, тем лучше качество воздуха.</p>
+                        <canvas id="comparisonAirChart" height="120"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3>Индекс качества воды</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Комплексный показатель состояния поверхностных водных объектов, включающий мутность, содержание нитратов, БПК5, pH и другие параметры.</p>
+                        <canvas id="comparisonWaterChart" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section reveal">
+            <div class="container">
+                <h2>Объёмы выбросов и переработка отходов</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Объём выбросов загрязняющих веществ</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Общий объём выбросов в атмосферу от стационарных источников (тыс. тонн в год).</p>
+                        <canvas id="comparisonEmissionsChart" height="120"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3>Доля переработанных отходов</h3>
+                        <p class="muted" style="margin-bottom: 16px;">Процент отходов, направленных на переработку и утилизацию от общего объёма образованных отходов.</p>
+                        <canvas id="comparisonWasteChart" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section reveal">
+            <div class="container">
+                <h2>Детальное сравнение по загрязнителям</h2>
+                <div class="card">
+                    <h3>Концентрации основных загрязнителей воздуха</h3>
+                    <p class="muted" style="margin-bottom: 16px;">Средние концентрации PM2.5, PM10, NO₂ и SO₂ в атмосферном воздухе (мкг/м³).</p>
+                    <canvas id="comparisonPollutantsChart" height="100"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="section reveal">
+            <div class="container">
+                <h2>Сводная таблица показателей</h2>
+                <div class="card">
+                    <p class="muted" style="margin-bottom: 16px;">Полная таблица экологических показателей по всем сравниваемым регионам. Гомельская область выделена зелёным цветом, что позволяет сразу увидеть её позицию по отношению к соседям.</p>
+                    <div class="comparison-table-wrapper">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Регион</th>
+                                    <th>AQI (воздух)</th>
+                                    <th>Индекс воды</th>
+                                    <th>Выбросы (тыс. т/год)</th>
+                                    <th>Обработка отходов (%)</th>
+                                    <th>PM2.5 (мкг/м³)</th>
+                                    <th>PM10 (мкг/м³)</th>
+                                    <th>NO₂ (мкг/м³)</th>
+                                    <th>Лесной фонд (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparisonTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section reveal">
+            <div class="container">
+                <h2>Аналитические выводы</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Сильные стороны Гомельской области</h3>
+                        <ul class="checklist">
+                            <li>Высокая лесистость — более 46% территории (Полесье)</li>
+                            <li>Снижение выбросов на 8% по сравнению с 2025 годом</li>
+                            <li>Доля переработки отходов выросла до 39%</li>
+                            <li>Крупные ООПТ: нацпарк «Припятский» и Полесский заповедник</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Области для улучшения</h3>
+                        <ul class="checklist">
+                            <li>Довести долю переработки отходов до 50%+ (сейчас 39%)</li>
+                            <li>Дальнейшее снижение выбросов в Жлобине, Мозыре и Светлогорске</li>
+                            <li>Завершение модернизации очистных сооружений</li>
+                            <li>Расширение сети экологического мониторинга в районах</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section reveal">
+            <div class="container">
+                <h2>Города Гомельской области</h2>
+                <p class="muted" style="margin-bottom: 16px;">Локальный срез: качество воздуха и вклад промышленности в крупнейших городах региона. Чем ниже AQI, тем чище воздух.</p>
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>AQI по городам области</h3>
+                        <canvas id="gomelCitiesAirChart" height="120"></canvas>
+                    </div>
+                    <div class="card">
+                        <h3>Кратко о городах</h3>
+                        <ul class="checklist">
+                            <li><strong>Гомель</strong> — транспорт, Гомсельмаш, химзавод, ТЭЦ-2</li>
+                            <li><strong>Жлобин</strong> — БМЗ, основной вклад в выбросы области</li>
+                            <li><strong>Мозырь</strong> — нефтепереработка и Припять</li>
+                            <li><strong>Светлогорск</strong> — «Химволокно» и ТЭЦ</li>
+                            <li><strong>Речица</strong> — нефтедобыча и Днепр</li>
+                            <li><strong>Калинковичи, Рогачёв, Добруш</strong> — меньшая промнагрузка</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section reveal">
+            <div class="container">
+                <h2>Рейтинг регионов</h2>
+                <div class="card">
+                    <p class="muted" style="margin-bottom: 20px;">Общий экологический рейтинг регионов на основе комплексной оценки всех показателей (чем выше балл, тем лучше экологическая ситуация).</p>
+                    <canvas id="comparisonRankingChart" height="100"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div>
+                © <span id="year"></span> Экология Гомельской области. Проект сделан Харьковой Софией.
+            </div>
+            <nav class="nav">
+                <a href="index.html#overview">На главную</a>
+                <a href="index.html#sources">Источники</a>
+                <a href="news.html">Новости</a>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Модальное окно калькулятора -->
+    <div id="calculatorModal" class="modal">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header" style="background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(16,185,129,0.1)); border-bottom: 2px solid rgba(16,185,129,0.2);">
+                <div style="display: flex; align-items: center; gap: 20px; flex: 1;">
+                    <div style="display: flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 20px; background: linear-gradient(135deg, rgba(6,182,212,0.3), rgba(16,185,129,0.3)); border: 3px solid rgba(16,185,129,0.5); box-shadow: 0 4px 15px rgba(16,185,129,0.3);">
+                        <span style="font-size: 48px;">🧮</span>
+                    </div>
+                    <div style="flex: 1;">
+                        <h2 class="calculator-title-gradient" style="margin: 0 0 8px; font-size: 32px;">
+                            Экологический калькулятор
+                        </h2>
+                        <p style="margin: 0 0 4px; color: var(--muted); font-size: 15px; line-height: 1.5;">
+                            🌍 Рассчитайте ваш углеродный след и получите персональные рекомендации
+                        </p>
+                        <p style="margin: 0; color: var(--muted); font-size: 13px; opacity: 0.8;">
+                            Узнайте, как ваш образ жизни влияет на окружающую среду
+                        </p>
+                    </div>
+                </div>
+                <button class="modal-close" id="btnCloseCalculator" style="margin-left: 20px;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 32px;">
+                <div style="text-align: center; margin-bottom: 32px; padding: 20px; background: rgba(16,185,129,0.05); border-radius: 12px; border: 1px solid rgba(16,185,129,0.15);">
+                    <p style="margin: 0 0 16px; color: var(--text); font-size: 16px; font-weight: 500;">
+                        💡 Заполните данные о вашем образе жизни, чтобы узнать ваш экологический след
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px;">
+                        <span style="display: inline-block; padding: 6px 12px; background: rgba(6,182,212,0.15); border-radius: 8px; font-size: 13px; color: var(--primary); border: 1px solid rgba(6,182,212,0.3);">
+                            💡 Пример: 500 км/мес на авто
+                        </span>
+                        <span style="display: inline-block; padding: 6px 12px; background: rgba(16,185,129,0.15); border-radius: 8px; font-size: 13px; color: var(--accent); border: 1px solid rgba(16,185,129,0.3);">
+                            ⚡ Среднее: 200 кВт·ч/мес
+                        </span>
+                        <span style="display: inline-block; padding: 6px 12px; background: rgba(6,182,212,0.15); border-radius: 8px; font-size: 13px; color: var(--primary); border: 1px solid rgba(6,182,212,0.3);">
+                            🏠 Газ: 50-100 м³/мес
+                        </span>
+                    </div>
+                </div>
+                <div class="grid-2" style="margin-top: 24px;">
+                    <div>
+                        <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                            <span style="font-size: 24px;">🚗</span>
+                            <span>Транспорт</span>
+                        </h3>
+                        <div class="form-group">
+                            <label>Поездки на автомобиле (км/месяц)</label>
+                            <input type="number" id="calcCar" class="form-input" value="0" min="0" placeholder="Например: 500" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">💡 Средний показатель: 300-800 км/месяц</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Поездки на общественном транспорте (км/месяц)</label>
+                            <input type="number" id="calcPublic" class="form-input" value="0" min="0" placeholder="Например: 200" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">🚌 Автобус, трамвай, метро</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Перелёты (часов/год)</label>
+                            <input type="number" id="calcFlights" class="form-input" value="0" min="0" placeholder="Например: 10" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">✈️ Один перелёт ≈ 2-3 часа</small>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                            <span style="font-size: 24px;">⚡</span>
+                            <span>Энергия и отходы</span>
+                        </h3>
+                        <div class="form-group">
+                            <label>Потребление электроэнергии (кВт·ч/месяц)</label>
+                            <input type="number" id="calcEnergy" class="form-input" value="0" min="0" placeholder="Например: 200" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">⚡ Среднее для квартиры: 150-300 кВт·ч/мес</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Потребление газа (м³/месяц)</label>
+                            <input type="number" id="calcGas" class="form-input" value="0" min="0" placeholder="Например: 80" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">🏠 Среднее: 50-150 м³/месяц (отопление, готовка)</small>
+                        </div>
+                        <div class="form-group">
+                            <label>Отходы (кг/месяц)</label>
+                            <input type="number" id="calcWaste" class="form-input" value="0" min="0" placeholder="Например: 30" />
+                            <small style="display: block; margin-top: 4px; color: var(--muted); font-size: 12px;">♻️ Среднее: 20-40 кг/месяц на человека</small>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 40px;">
+                    <button id="btnCalculate" class="btn" style="padding: 16px 40px; font-size: 16px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--accent)); border: none; box-shadow: 0 6px 20px rgba(16,185,129,0.4); transition: all 0.3s ease;">
+                        <span style="margin-right: 10px; font-size: 20px;">🧮</span>
+                        Рассчитать углеродный след
+                    </button>
+                </div>
+                <div id="calcResult" style="margin-top: 40px; display: none; animation: fadeInUp 0.5s ease;">
+                    <div class="card" style="background: linear-gradient(135deg, rgba(16,185,129,0.18), rgba(6,182,212,0.18)); border: 2px solid rgba(16,185,129,0.5); padding: 32px; box-shadow: 0 8px 30px rgba(16,185,129,0.2);">
+                        <div style="text-align: center; margin-bottom: 24px;">
+                            <div style="font-size: 64px; margin-bottom: 16px;">🌍</div>
+                            <h3 style="margin: 0 0 12px; font-size: 24px;">Ваш углеродный след</h3>
+                            <div style="font-size: 42px; font-weight: 800; color: var(--accent); margin: 20px 0; text-shadow: 0 2px 10px rgba(16,185,129,0.3);">
+                                <span id="calcTotal"></span> <span style="font-size: 20px; color: var(--muted); font-weight: 600;">тонн CO₂/год</span>
+                            </div>
+                        </div>
+                        <div id="calcRecommendations" style="margin-top: 24px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- App -->
+    <script src="assets/js/comparison.js"></script>
+    <script src="assets/js/features.js"></script>
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
+

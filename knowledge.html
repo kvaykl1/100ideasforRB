@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>База знаний — Экология Гомельской области</title>
+    <meta name="description" content="База знаний об экологии и предложения по улучшению окружающей среды Гомельской области." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="brand">
+                <div class="logo" aria-hidden="true">🌿</div>
+                <div>
+                    <h1>Экология Гомельской области</h1>
+                    <p class="tagline">Знания · Рекомендации · Решения</p>
+                </div>
+            </div>
+            <button class="nav-toggle" aria-label="Открыть меню" aria-expanded="false">
+                <span class="nav-toggle-bar"></span>
+            </button>
+            <nav class="nav">
+                <a href="index.html#overview" class="nav-link">Обзор</a>
+                <a href="index.html#air" class="nav-link">Воздух</a>
+                <a href="index.html#water" class="nav-link">Вода</a>
+                <a href="index.html#map" class="nav-link">Карта</a>
+                <a href="knowledge.html" class="cta" aria-current="page">База знаний</a>
+                <button id="btnOpenCalculator" class="nav-link calculator-link" style="background: none; border: none; cursor: pointer; font-family: inherit;">
+                    <span class="nav-icon">🧮</span>
+                    <span>Калькулятор</span>
+                </button>
+                <a href="comparison.html" class="nav-link">Сравнение</a>
+                <a href="news.html" class="nav-link">Новости</a>
+                <a href="admin.html" class="nav-link">Админ</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="section hero reveal">
+            <div class="container">
+                <h2>📚 База знаний и рекомендации</h2>
+                <p class="lead">
+                    Справочные материалы об экологии Гомельской области: Полесье, реки Сож, Припять и Днепр, промышленность и ООПТ.
+                    Данные актуальны на <strong id="dataAsOf">август 2026</strong>.
+                </p>
+            </div>
+        </section>
+
+        <section class="section reveal">
+            <div class="container">
+                <div class="news-tabs">
+                    <button class="news-tab-btn active" data-tab="knowledge-base">📚 База знаний об экологии</button>
+                    <button class="news-tab-btn" data-tab="suggestions">💡 Предложения по улучшению экологии</button>
+                </div>
+
+                <div class="news-tab-panel active" id="tab-knowledge-base">
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>🌍 Основы экологии</h3>
+                            <ul class="highlights">
+                                <li><a href="#knowledge-air" class="knowledge-link">Качество воздуха и его влияние</a></li>
+                                <li><a href="#knowledge-water" class="knowledge-link">Водные ресурсы и их охрана</a></li>
+                                <li><a href="#knowledge-waste" class="knowledge-link">Обращение с отходами</a></li>
+                                <li><a href="#knowledge-climate" class="knowledge-link">Изменение климата</a></li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h3>💡 Практические советы</h3>
+                            <ul class="highlights">
+                                <li><a href="#knowledge-tips" class="knowledge-link">Экологичный образ жизни</a></li>
+                                <li><a href="#knowledge-recycling" class="knowledge-link">Раздельный сбор отходов</a></li>
+                                <li><a href="#knowledge-energy" class="knowledge-link">Энергосбережение</a></li>
+                                <li><a href="#knowledge-transport" class="knowledge-link">Экологичный транспорт</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="grid-2" style="margin-top: 24px;">
+                        <div class="card">
+                            <h3>🗺️ Гомельская область</h3>
+                            <ul class="highlights">
+                                <li><a href="#knowledge-pripyat-park" class="knowledge-link">Нацпарк «Припятский»</a></li>
+                                <li><a href="#knowledge-gomel-rivers" class="knowledge-link">Реки и водоёмы региона</a></li>
+                                <li><a href="#knowledge-protected" class="knowledge-link">ООПТ и заказники</a></li>
+                                <li><a href="#knowledge-industry" class="knowledge-link">Промышленность и экология</a></li>
+                                <li><a href="#knowledge-chernobyl" class="knowledge-link">Южные районы и наследие ЧАЭС</a></li>
+                                <li><a href="#knowledge-fire" class="knowledge-link">Лесные и торфяные пожары</a></li>
+                            </ul>
+                        </div>
+                        <div class="card">
+                            <h3>⚖️ Законодательство</h3>
+                            <ul class="highlights">
+                                <li><a href="#knowledge-laws" class="knowledge-link">Экологическое законодательство</a></li>
+                                <li><a href="#knowledge-citizen" class="knowledge-link">Права граждан</a></li>
+                                <li><a href="#knowledge-report" class="knowledge-link">Как сообщить о нарушении</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="knowledgeContent" class="card" style="margin-top: 24px; display: none;">
+                        <div id="knowledgeText"></div>
+                    </div>
+                </div>
+
+                <div class="news-tab-panel" id="tab-suggestions">
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3>Краткосрочные меры</h3>
+                            <ul class="checklist" id="shortTermList"></ul>
+                        </div>
+                        <div class="card">
+                            <h3>Долгосрочные меры</h3>
+                            <ul class="checklist" id="longTermList"></ul>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top: 24px;">
+                        <h3>💬 Предложить свою идею</h3>
+                        <p class="muted">Опишите мероприятие, которое, по вашему мнению, поможет улучшить экологию региона.</p>
+                        <form id="suggestionForm" class="suggestion-form">
+                            <div class="form-group">
+                                <label>Ваше имя</label>
+                                <input type="text" id="suggName" class="form-input" placeholder="Иван Иванов" required />
+                            </div>
+                            <div class="form-group">
+                                <label>Категория</label>
+                                <select id="suggCategory" class="form-input">
+                                    <option value="short">Краткосрочная мера</option>
+                                    <option value="long">Долгосрочная мера</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Предложение</label>
+                                <textarea id="suggText" class="form-input" rows="4" placeholder="Опишите вашу идею..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn">Отправить предложение</button>
+                        </form>
+                        <p id="suggSuccess" class="muted" style="display:none; margin-top: 12px; color: var(--accent);">✅ Спасибо! Ваше предложение сохранено и будет рассмотрено администратором.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <div>© <span id="year"></span> Экология Гомельской области. Проект сделан Харьковой Софией.</div>
+            <nav class="nav">
+                <a href="index.html#overview">На главную</a>
+                <a href="news.html">Новости</a>
+                <a href="comparison.html">Сравнение</a>
+            </nav>
+        </div>
+    </footer>
+
+    <div id="calculatorModal" class="modal">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2 style="margin:0;">🧮 Экологический калькулятор</h2>
+                <button class="modal-close" id="btnCloseCalculator">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 32px;">
+                <div class="grid-2">
+                    <div>
+                        <div class="form-group">
+                            <label>Автомобиль (км/месяц)</label>
+                            <input type="number" id="calcCar" class="form-input" value="0" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Общественный транспорт (км/месяц)</label>
+                            <input type="number" id="calcPublic" class="form-input" value="0" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Перелёты (часов/год)</label>
+                            <input type="number" id="calcFlights" class="form-input" value="0" min="0" />
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label>Электроэнергия (кВт·ч/месяц)</label>
+                            <input type="number" id="calcEnergy" class="form-input" value="0" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Газ (м³/месяц)</label>
+                            <input type="number" id="calcGas" class="form-input" value="0" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Отходы (кг/месяц)</label>
+                            <input type="number" id="calcWaste" class="form-input" value="0" min="0" />
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 24px;">
+                    <button id="btnCalculate" class="btn">Рассчитать углеродный след</button>
+                </div>
+                <div id="calcResult" style="margin-top: 24px; display: none;">
+                    <div class="card">
+                        <h3>Ваш углеродный след: <span id="calcTotal"></span> т CO₂/год</h3>
+                        <div id="calcRecommendations"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/knowledge-data.js"></script>
+    <script src="assets/js/data-store.js"></script>
+    <script src="assets/js/features.js"></script>
+    <script src="assets/js/knowledge-page.js"></script>
+    <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Админ-панель — Экология Гомельской области</title>
+    <meta name="description" content="Панель администратора экологического портала Гомельской области." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body class="admin-body">
+
+    <!-- ===== Экран входа ===== -->
+    <div id="loginSection" class="admin-login-screen">
+        <div class="admin-login-bg"></div>
+        <div class="admin-login-wrap">
+            <div class="admin-login-brand">
+                <div class="admin-login-logo">🌿</div>
+                <h1>Экология Гомельской области</h1>
+                <p>Панель администратора</p>
+            </div>
+            <div class="card admin-login-card">
+                <div class="admin-login-card-header">
+                    <span class="admin-login-icon">🔐</span>
+                    <div>
+                        <h2>Вход в систему</h2>
+                        <p class="muted">Управление новостями, предложениями и точками на карте</p>
+                    </div>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Пароль администратора</label>
+                        <input type="password" id="loginPassword" class="form-input admin-input" placeholder="••••••••" required autocomplete="current-password" />
+                    </div>
+                    <button type="submit" class="btn admin-btn-primary">
+                        <span>Войти в панель</span>
+                        <span class="admin-btn-arrow">→</span>
+                    </button>
+                </form>
+                <p id="loginError" class="admin-error" style="display:none;">
+                    <span>⚠️</span> Неверный пароль. Попробуйте снова.
+                </p>
+                <div class="admin-login-hint">
+                    <span class="admin-hint-label">Демо-доступ для презентации</span>
+                    <code class="admin-hint-code">eco2026</code>
+                </div>
+            </div>
+            <a href="index.html" class="admin-back-link">← Вернуться на сайт</a>
+        </div>
+    </div>
+
+    <!-- ===== Дашборд ===== -->
+    <div id="dashboardSection" class="admin-layout" style="display:none;">
+
+        <!-- Боковая панель -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-brand">
+                <div class="admin-sidebar-logo">⚙️</div>
+                <div>
+                    <strong>Админ-панель</strong>
+                    <span>Эко-портал</span>
+                </div>
+            </div>
+
+            <nav class="admin-sidebar-nav">
+                <button class="admin-nav-item active" data-tab="admin-news">
+                    <span class="admin-nav-icon">📰</span>
+                    <span>Новости</span>
+                    <span class="admin-nav-badge" id="badgeNews">0</span>
+                </button>
+                <button class="admin-nav-item" data-tab="admin-suggestions">
+                    <span class="admin-nav-icon">💡</span>
+                    <span>Предложения</span>
+                    <span class="admin-nav-badge" id="badgeSuggestions">0</span>
+                </button>
+                <button class="admin-nav-item" data-tab="admin-places">
+                    <span class="admin-nav-icon">📍</span>
+                    <span>Точки на карте</span>
+                    <span class="admin-nav-badge" id="badgePlaces">0</span>
+                </button>
+                <button class="admin-nav-item" data-tab="admin-stats">
+                    <span class="admin-nav-icon">📊</span>
+                    <span>Статистика</span>
+                </button>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-data-badge">
+                    <span class="admin-data-dot"></span>
+                    Данные: <strong id="adminDataAsOf">август 2026</strong>
+                </div>
+                <a href="index.html" class="admin-sidebar-link">🌐 Открыть сайт</a>
+                <button id="btnLogout" class="admin-sidebar-link admin-logout-btn">🚪 Выйти</button>
+            </div>
+        </aside>
+
+        <!-- Основной контент -->
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <div class="admin-topbar-left">
+                    <button id="adminMenuToggle" class="admin-menu-toggle" aria-label="Меню">☰</button>
+                    <div>
+                        <h2 id="adminPageTitle">Новости</h2>
+                        <p class="muted admin-topbar-sub">Управление контентом портала</p>
+                    </div>
+                </div>
+                <div class="admin-topbar-actions">
+                    <button id="btnResetAll" class="btn btn-secondary admin-reset-btn">↺ Сбросить данные</button>
+                </div>
+            </header>
+
+            <div class="admin-content">
+
+                <!-- KPI-полоска -->
+                <div class="admin-kpi-strip">
+                    <div class="admin-kpi-card">
+                        <span class="admin-kpi-icon">📰</span>
+                        <div>
+                            <div class="admin-kpi-num" id="statNews">0</div>
+                            <div class="admin-kpi-lbl">Новостей</div>
+                        </div>
+                    </div>
+                    <div class="admin-kpi-card">
+                        <span class="admin-kpi-icon">💡</span>
+                        <div>
+                            <div class="admin-kpi-num" id="statSuggestions">0</div>
+                            <div class="admin-kpi-lbl">Предложений</div>
+                        </div>
+                    </div>
+                    <div class="admin-kpi-card admin-kpi-green">
+                        <span class="admin-kpi-icon">🟢</span>
+                        <div>
+                            <div class="admin-kpi-num" id="statClean">0</div>
+                            <div class="admin-kpi-lbl">Чистых точек</div>
+                        </div>
+                    </div>
+                    <div class="admin-kpi-card admin-kpi-red">
+                        <span class="admin-kpi-icon">🔴</span>
+                        <div>
+                            <div class="admin-kpi-num" id="statDirty">0</div>
+                            <div class="admin-kpi-lbl">Проблемных точек</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка: Новости -->
+                <div class="admin-panel active" id="tab-admin-news">
+                    <div class="admin-panel-grid">
+                        <div class="card admin-form-card">
+                            <div class="admin-card-header">
+                                <h3>➕ Добавить новость</h3>
+                            </div>
+                            <form id="newsForm" class="admin-form-grid">
+                                <div class="form-group">
+                                    <label>Дата</label>
+                                    <input type="text" id="newsDate" class="form-input admin-input" placeholder="12 августа 2026" required />
+                                </div>
+                                <div class="form-group">
+                                    <label>Тег</label>
+                                    <input type="text" id="newsTag" class="form-input admin-input" placeholder="Мониторинг" required />
+                                </div>
+                                <div class="form-group admin-full">
+                                    <label>Заголовок</label>
+                                    <input type="text" id="newsTitle" class="form-input admin-input" required />
+                                </div>
+                                <div class="form-group admin-full">
+                                    <label>Текст</label>
+                                    <textarea id="newsText" class="form-input admin-input" rows="5" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Ссылка</label>
+                                    <input type="url" id="newsLink" class="form-input admin-input" placeholder="https://..." />
+                                </div>
+                                <div class="form-group">
+                                    <label>Текст ссылки</label>
+                                    <input type="text" id="newsLinkText" class="form-input admin-input" placeholder="Подробнее" />
+                                </div>
+                                <div class="admin-full">
+                                    <button type="submit" class="btn admin-btn-primary">Опубликовать новость</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="admin-list-section">
+                            <div class="admin-card-header">
+                                <h3>📋 Опубликованные новости</h3>
+                                <span class="admin-count-label" id="newsCountLabel">0 записей</span>
+                            </div>
+                            <div id="newsList" class="admin-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка: Предложения -->
+                <div class="admin-panel" id="tab-admin-suggestions">
+                    <div class="grid-2">
+                        <div class="card admin-form-card">
+                            <div class="admin-card-header">
+                                <h3>⚡ Краткосрочные меры</h3>
+                            </div>
+                            <form id="addShortForm" class="admin-inline-form">
+                                <input type="text" id="newShort" class="form-input admin-input" placeholder="Новое предложение..." required />
+                                <button type="submit" class="btn admin-btn-add">+</button>
+                            </form>
+                            <ul id="adminShortList" class="admin-editable-list"></ul>
+                        </div>
+                        <div class="card admin-form-card">
+                            <div class="admin-card-header">
+                                <h3>🎯 Долгосрочные меры</h3>
+                            </div>
+                            <form id="addLongForm" class="admin-inline-form">
+                                <input type="text" id="newLong" class="form-input admin-input" placeholder="Новое предложение..." required />
+                                <button type="submit" class="btn admin-btn-add">+</button>
+                            </form>
+                            <ul id="adminLongList" class="admin-editable-list"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка: Точки -->
+                <div class="admin-panel" id="tab-admin-places">
+                    <div class="grid-2">
+                        <div class="card admin-form-card">
+                            <div class="admin-card-header admin-card-header-green">
+                                <h3>🟢 Чистые локации</h3>
+                                <span class="admin-count-label" id="cleanCountLabel">0 точек</span>
+                            </div>
+                            <p class="muted admin-panel-desc">Точки, добавленные пользователями через карту на главной странице.</p>
+                            <ul id="adminCleanList" class="admin-editable-list"></ul>
+                        </div>
+                        <div class="card admin-form-card">
+                            <div class="admin-card-header admin-card-header-red">
+                                <h3>🔴 Проблемные локации</h3>
+                                <span class="admin-count-label" id="dirtyCountLabel">0 точек</span>
+                            </div>
+                            <p class="muted admin-panel-desc">Проблемные зоны, отмеченные пользователями на интерактивной карте.</p>
+                            <ul id="adminDirtyList" class="admin-editable-list"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка: Статистика -->
+                <div class="admin-panel" id="tab-admin-stats">
+                    <div class="card admin-form-card">
+                        <div class="admin-card-header">
+                            <h3>ℹ️ Справка по панели</h3>
+                        </div>
+                        <div class="admin-help-grid">
+                            <div class="admin-help-item">
+                                <span class="admin-help-icon">💾</span>
+                                <div>
+                                    <strong>Локальное хранение</strong>
+                                    <p class="muted">Все изменения сохраняются в браузере (localStorage) и видны на сайте.</p>
+                                </div>
+                            </div>
+                            <div class="admin-help-item">
+                                <span class="admin-help-icon">📰</span>
+                                <div>
+                                    <strong>Новости</strong>
+                                    <p class="muted">Публикуются на странице «Новости» сразу после добавления.</p>
+                                </div>
+                            </div>
+                            <div class="admin-help-item">
+                                <span class="admin-help-icon">💡</span>
+                                <div>
+                                    <strong>Предложения</strong>
+                                    <p class="muted">Отображаются в «База знаний» → вкладка «Предложения».</p>
+                                </div>
+                            </div>
+                            <div class="admin-help-item">
+                                <span class="admin-help-icon">↺</span>
+                                <div>
+                                    <strong>Сброс данных</strong>
+                                    <p class="muted">Кнопка «Сбросить» восстанавливает исходные данные на <strong id="helpDataAsOf">август 2026</strong>.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Тост-уведомление -->
+    <div id="adminToast" class="admin-toast"></div>
+
+    <script src="assets/js/data-store.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>
